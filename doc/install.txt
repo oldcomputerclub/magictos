@@ -1,0 +1,121 @@
+Installing:
+
+You will need a (cross-)GCC toolchain for TOS/MiNT.
+Currently, the only supported one is Vincent Rivière's m68k-atari-mint tools:
+http://vincent.riviere.free.fr/soft/m68k-atari-mint/
+
+Other toolchains may also work.  However, you will not be able to use one
+based on GCC 2, for several reasons.  The most important of these is that
+the generated binaries are just too large.
+
+You will also need GNU make (tested with make 3.81 & 4.2.1).
+
+Building EmuTOS
+===============
+
+To build, first do:
+
+    make help
+
+This will display the list of all possible targets.
+
+To build the standard etos512k.img, do
+
+    make 512
+
+To build EmuTOS for a different default country (changes the language and the
+keyboard), do
+
+    make 512 COUNTRY=en
+or
+    make 512 COUNTRY=fr
+or
+    make 512 COUNTRY=de
+
+NOTE: by specifying COUNTRY=xx, all countries are included in the binary,
+but a flag in the TOS header will indicate country 'xx'. If, however, the
+EmuTOS image is booted on an emulator featuring NVRAM emulation (such as
+ARAnyM), the country number in the NVRAM will override that setting of the
+country in the TOS header.
+
+To build EmuTOS for a single country only, you must use UNIQUE instead of
+COUNTRY. This is mainly useful for the 192 and 256 KB targets. Example:
+
+    make 256 UNIQUE=fr
+
+Many options are set via the configuration file include/config.h.  They can
+be overridden most easily via #defines in a user-created file localconf.h.
+
+It is required to do "make clean" before switching to a different target,
+e.g., switching from 512k to 256k ROMs. The only change allowed without
+"make clean" is to build (with same target) for a different language.
+
+A complete list of targets
+==========================
+
+EmuTOS binaries
+---------------
+192         etos192us.img, EmuTOS ROM padded to size 192 KB (starting at 0x00fc0000)
+256         etos256us.img, EmuTOS ROM padded to size 256 KB (starting at 0x00e00000)
+512         etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00e00000)
+1024        etos1024k.img, EmuTOS ROM padded to size 1024 KB (starting at 0x00e00000)
+aranym      emutos-aranym.img, suitable for ARAnyM
+firebee     emutosfb.s19, to be flashed on the FireBee
+firebee-prg emutos.prg, a RAM tos for the FireBee
+amiga       emutos-amiga.rom, EmuTOS ROM for Amiga hardware
+amigakd     emutos-kickdisk.adf, EmuTOS as Amiga 1000 Kickstart disk
+amigaflop   emutos.adf, EmuTOS RAM as Amiga boot floppy
+amigaflopvampire emutos-vampire.adf, EmuTOS RAM as Amiga boot floppy optimized for Vampire V2
+amigavampire     emutos-vampire.rom, EmuTOS ROM for Amiga optimized for Vampire V2
+v4sa        emutos-vampire-v4sa.rom, EmuTOS ROM for Amiga Vampire V4 Standalone
+lisaflop    emutos.dc42, EmuTOS RAM as Apple Lisa boot floppy
+m548x-dbug  emutos-m548x-dbug.s19, EmuTOS for dBUG on ColdFire Evaluation Boards
+m548x-bas   emutos-m548x-bas.s19, EmuTOS for BaS_gcc on ColdFire Evaluation Boards
+m548x-prg   emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc
+prg         emutos.prg, a RAM tos
+flop        emutosus.st, a bootable floppy with RAM tos
+pak3        etospak3us.img, suitable for PAK/3 systems
+cart        etoscart.img, EmuTOS as a diagnostic cartridge
+
+Binary targets modifiers
+------------------------
+nothing     same as COUNTRY=us
+COUNTRY=xx  all countries in the binary, country xx being the default
+UNIQUE=xx   a smaller binary with only support for country xx
+DEF='-DSOMEDEFINE=value'
+            used to override the default settings from include/config.h.
+            WARNING: do "make clean" first.
+
+Utility targets
+---------------
+bugready    for translations: sets up files in preparation for 'bug update'
+version     display the EmuTOS version
+
+Debug targets
+-------------
+dsm         dsm.txt, an edited disassembly of emutos.img
+
+Git-related targets
+-------------------
+clean       cleans all generated files
+charset     check the charset of all the source files
+crlf        convert all end-of-lines to LF
+expand      expand tabs to spaces
+gitready    ensure the files have a proper format for Git (same as 'make crlf expand')
+help        displays a complete list of targets
+
+Release-related targets
+-------------------
+all192      all 192 KB images
+all256      all 256 KB images
+allpak3     all PAK/3 images
+allprg      all emutos*.prg
+allflop     all emutos*.st
+release     build the release archives into release-archives
+
+
+Good luck!
+
+-- 
+The EmuTOS development team
+https://emutos.sourceforge.io/
